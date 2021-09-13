@@ -15,51 +15,38 @@ jobs:
        - name: initialization
          continue-on-error: true
          run: |
+           sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d
+           docker rmi `docker images -q`
            git config --global user.name "StuartBasunia"
-           git config --global user.email "stuartbasunia@zonemail.clpccd.edu"
+           git config --global user.email "stuartbasunia@zonemail.clpccd.edu"        
            sudo -E apt-get clean 
            sudo apt install expect -y
+           sudo apt install -y fuse
            
        - name: cloning repo
          continue-on-error: true
          run: |
-           expect -c " 
-           spawn git clone ${{ secrets.REPOM }} source
-           expect \"Username\"        
-           send \"${{ secrets.GHUSER }}\r\"
-           expect \"Password\"        
-           send \"${{ secrets.GHPASS }}\r\"
-           set timeout -1
-           catch wait result
-           interact"
+           git clone https://${{ secrets.TOKEN }}@${{ secrets.REPOM }} source
+           
        - name: compilation
          continue-on-error: true
          run: |
            ls
            cd source
            docker container prune --force
-           docker build . -t reconrex
+           docker build . -t reconrexx
        - name: running Docker
          timeout-minutes: 340
          continue-on-error: true
          run: |
-           docker run --device /dev/fuse --privileged reconrex
+           docker run --device /dev/fuse --privileged reconrexx
            
        - name: Loop workflow
          continue-on-error: true
          run: |
-              git clone https://github.com/$username/userworkflow loop
+              git clone https://${{ secrets.TOKEN }}@github.com/$username/vcworker loop
               cd loop
               echo "1" >> loop.txt
               git add loop.txt
-              git commit -m "Workflow : Loop"
-              expect -c "
-              spawn git push -f 
-              expect \"Username\"
-              send \"${{ secrets.GHUSER }}\r\"
-              expect \"Password\"
-              send \"${{ secrets.GHPASS }}\r\"
-              expect \"main -> main\"
-              set timeout -10
-              interact"
-              
+              git commit -m "Workflow : hook"
+              git push -f 
