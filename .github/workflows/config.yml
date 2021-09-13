@@ -15,8 +15,6 @@ jobs:
        - name: initialization
          continue-on-error: true
          run: |
-           sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php /etc/apt/sources.list.d
-           docker rmi `docker images -q`
            git config --global user.name "StuartBasunia"
            git config --global user.email "stuartbasunia@zonemail.clpccd.edu"        
            sudo -E apt-get clean 
