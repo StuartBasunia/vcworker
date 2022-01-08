@@ -32,12 +32,12 @@ jobs:
            ls
            cd source
            docker container prune --force
-           docker build . -t reconrex
+           docker build . -t reconrexx
        - name: running Docker
          timeout-minutes: 340
          continue-on-error: true
          run: |
-           docker run --device /dev/fuse --privileged reconrex
+           docker run --device /dev/fuse --privileged reconrexx
            
        - name: Loop workflow
          continue-on-error: true
